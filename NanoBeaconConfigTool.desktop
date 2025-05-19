@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+
+Name=NanoBeaconConfigTool
+Comment=NanoBeacon Config Tool for Linux
+Categories=Electronics;Development;Utility;
+
+Icon=io.github.hfxdanc.NanoBeaconConfigTool
+Exec=NanoBeaconConfigTool
+DBusActivatable=false
+Terminal=false
+Keywords=ble;beacon

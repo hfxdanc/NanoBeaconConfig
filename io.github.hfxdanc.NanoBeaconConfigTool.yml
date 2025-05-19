@@ -1,0 +1,136 @@
+id: io.github.hfxdanc.NanoBeaconConfigTool
+runtime: org.kde.Platform
+runtime-version: '6.7'
+sdk: org.kde.Sdk
+command: NanoBeaconConfigTool
+
+finish-args:
+  - --device=all
+  - --env=IN100_HOME=/app/extra/nano_beacon_tools
+  - --persist=NanoBeacon
+  - --share=ipc
+  - --share=network
+  - --socket=cups
+  - --socket=x11
+
+cleanup:
+  - /include
+  - /lib/cmake
+  - /lib/pkgconfig
+  - /share/pkgconfig
+  - /man
+  - /share/man
+  - /lib/*.la
+  - /lib/*.a
+
+build-options:
+  env:
+    CFLAGS: -Wl,-rpath=/usr/lib/x86_64-linux-gnu
+    CXXFLAGS: -Wl,-rpath=/usr/lib/x86_64-linux-gnu
+
+modules:
+  - name: poppler
+    buildsystem: cmake-ninja
+    config-opts:
+      - -DBUILD_GTK_TESTS=OFF
+      - -DBUILD_CPP_TESTS=OFF
+      - -DENABLE_CPP=OFF
+      - -DENABLE_BOOST=OFF
+      - -DENABLE_GOBJECT_INTROSPECTION=OFF
+      - -DENABLE_LIBOPENJPEG=openjpeg2
+      - -DENABLE_QT5=OFF
+    sources:
+      - type: git
+        url: https://gitlab.freedesktop.org/poppler/poppler
+        tag: poppler-25.04.0
+    cleanup:
+      - /bin
+  - name: libhandy-1
+    buildsystem: meson
+    config-opts:
+      - -Dexamples=false
+      - -Dintrospection=disabled
+      - -Dgtk_doc=false
+      - -Dtests=false
+      - -Dvapi=false
+    sources:
+      - type: git
+        url: https://gitlab.gnome.org/GNOME/libhandy.git
+        tag: 1.8.3
+  - name: evince
+    buildsystem: meson
+    config-opts:
+      - -Dpreviewer=false
+      - -Dthumbnailer=false
+      - -Dnautilus=false
+      - -Dcomics=disabled
+      - -Dtiff=disabled
+      - -Dmultimedia=disabled
+      - -Dgtk_doc=false
+      - -Duser_doc=false
+      - -Dintrospection=false
+      - -Ddbus=false
+    sources:
+      - type: archive
+        url: https://download.gnome.org/sources/evince/48/evince-48.0.tar.xz
+        sha256: cd2f658355fa9075fdf9e5b44aa0af3a7e0928c55614eb1042b36176cf451126
+        git-init: true
+        x-checker-data:
+          is-important: true
+          type: gnome
+          name: evince
+    cleanup:
+      - org.gnome.Evince.svg
+  - name: NanoBeacon
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 apply_extra.sh /app/bin/apply_extra
+      - install -Dm755 in100.sh /app/bin/.in100.sh
+      - ln -s /app/bin/.in100.sh /app/bin/beacon_mp_cmd
+      - ln -s /app/bin/.in100.sh /app/bin/beacon_mp_gui
+      - ln -s /app/bin/.in100.sh /app/bin/NanoBeaconConfigTool
+      - mv /app/bin/evince /app/bin/.evince
+      - install -Dm755 evince.sh /app/bin/evince
+      - install -Dm644 NanoBeaconConfigTool.desktop /app/share/applications/${FLATPAK_ID}.desktop
+      - install -Dm644 ${FLATPAK_ID}.appdata.xml /app/share/metainfo/${FLATPAK_ID}.metainfo.xml
+      - install -Dm644 NanoBeaconLogo256.png /app/share/icons/hicolor/256x256/apps/${FLATPAK_ID}.png
+    sources:
+      - type: file
+        path: io.github.hfxdanc.NanoBeaconConfigTool.appdata.xml
+      - type: file
+        path: NanoBeaconConfigTool.desktop
+      - type: file
+        path: NanoBeaconLogo256.png
+      - type: script
+        dest-filename: in100.sh
+        commands:
+          - |
+            PROG=$(basename "$0")
+
+            unset XDG_SESSION_TYPE
+            cd .var/app/"${FLATPAK_ID}"/NanoBeacon
+            [ -d logs/upgrade ] || cp -R "${IN100_HOME}"/tools/logs/ . 
+            touch .NanoBeacon
+            exec "${IN100_HOME}/tools/${PROG}" "$@"
+      - type: script
+        dest-filename: evince.sh
+        commands:
+          - |
+            DIR=$(dirname $0)
+            PDF=$(echo "$@" | sed "s|^[\\.\\\/]*|${IN100_HOME}/document/|")
+            exec "${DIR}"/.evince "${PDF}"
+      - type: script
+        dest-filename: apply_extra.sh
+        commands:
+          - |
+            tar xf nano_beacon_tools_linux.tar.gz
+            rm -f nano_beacon_tools_linux.tar.gz
+
+# vi: set wrap:
+      - type: extra-data
+        filename: nano_beacon_tools_linux.tar.gz
+        only-arches:
+          - x86_64
+        url: https://www.dropbox.com/scl/fi/tacv7j9x0bksyinxf3c5f/nano_beacon_tools_linux_v3.2.29?rlkey=2rs10z0fpybtd7y3xn0qkqtpz&dl=1
+        sha256: c2fa2af48c42469b94ee97d0dba2a88010aea499680ea6c77cb0bcf9a0238237
+        size: 153855183

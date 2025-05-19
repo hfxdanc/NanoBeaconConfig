@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright  2022  InPlay Inc. All Rights Reserved -->
+<component type="desktop-application">
+  <id>io.github.hfxdanc.NanoBeaconConfigTool</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LicenseRef-proprietary</project_license>
+  <name>NanoBeaconConfigTool</name>
+  <summary>NanoBeacon Config Tool</summary>
+  <developer id="com.inplay-tech">
+    <name>InPlay Inc.</name>
+  </developer>
+  <update_contact>hfxdanc_AT_gmail.com</update_contact>
+
+  <description>
+    <p>This is a build of the InPlay Inc. NanoBeaconConfigTool for Linux packaged as a Flatpak.</p>
+    <p><em>NOTE: This wrapper is not verified by, affiliated with, sponsored or supported by InPlay Inc. in any way.</em></p>
+  </description>
+
+  <launchable type="desktop-id">io.github.hfxdanc.NanoBeaconConfigTool.desktop</launchable>
+  <provides>
+    <id>NanoBeaconConfigTool.desktop</id>
+  </provides>
+
+  <url type="homepage">https://inplay-tech.com/nanobeacon-config-tool</url>
+  <url type="contact">https://inplay-tech.com/contact</url>
+  <url type="vcs-browser">https://github.com/NanoBeacon/config-files</url>
+  <url type="vcs-browser">https://github.com/hfxdanc/NanoBeaconConfig</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption xml:lang="en">NanoBeaconConfigTool opening screencap</caption>
+      <image xml:lang="en">https://images.squarespace-cdn.com/content/v1/615e15afbd5653295346d2a8/1651871360127-ILCSQ6I5S54ZT2SFN14E/GUI.jpg</image>
+    </screenshot>
+  </screenshots>
+
+  <releases>
+    <release version="3.2.29" date="2025-05-19" />
+  </releases>
+
+  <branding>
+    <color type="primary" scheme_preference="light">#ff00ff</color>
+    <color type="primary" scheme_preference="dark">#993d3d</color>
+  </branding>
+
+  <content_rating type="oars-1.1" />
+
+  <recommends>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <display_length compare="ge">768</display_length>
+  </recommends>
+
+  <custom>
+    <value key="flathub::manifest">https://github.com/hfxdanc/NanoBeaconConfig/blob/main/org.flatpak.NanoBeaconConfigTool.yml</value>
+  </custom>
+</component>
